@@ -43,7 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post(
             '/tickets/{id}/bookings',
             [BookingController::class, 'store']
-        )->middleware('prevent.double.booking');
+        )->middleware('preventDoubleBooking');
 
         Route::get('/bookings', [BookingController::class, 'index']);
         Route::put('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
