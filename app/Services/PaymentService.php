@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Notifications\BookingConfirmedNotification;
+use Illuminate\Support\Facades\Notification;
 
 class PaymentService
 {
@@ -19,6 +21,7 @@ class PaymentService
 
         if ($status === 'success') {
             $booking->update(['status' => 'confirmed']);
+            Notification::send($booking->user, new BookingConfirmedNotification($booking));
         }
 
         return $payment;

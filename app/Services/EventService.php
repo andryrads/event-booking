@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
 use App\Models\Event;
 use App\Data\EventData;
 
@@ -9,13 +10,25 @@ class EventService
 {
     public function listEvents(array $filters)
     {
-        return Event::with('tickets')
-            ->filterByDate($filters['date'] ?? null)
-            ->searchByTitle($filters['search'] ?? null)
-            ->when(isset($filters['location']), fn ($q) =>
-                $q->where('location', 'ILIKE', "%{$filters['location']}%")
-            )
-            ->paginate(10);
+        $cacheKey = 'events_list_' . md5(json_encode($filters));
+
+        return Cache::remember($cacheKey, 60, function () use ($filters) {
+            $query = Event::with('tickets');
+
+            if (!empty($filters['search'])) {
+                $query->searchByTitle($filters['search']);
+            }
+
+            if (!empty($filters['date'])) {
+                $query->filterByDate($filters['date']);
+            }
+
+            if (!empty($filters['location'])) {
+                $query->where('location', 'LIKE', '%' . $filters['location'] . '%');
+            }
+
+            return $query->paginate(10);
+        });
     }
 
     public function createEvent(EventData $data, int $userId): Event
