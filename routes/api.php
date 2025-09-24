@@ -22,12 +22,12 @@ use App\Http\Controllers\PaymentController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::get('/events', [EventController::class, 'index']);
+Route::get('/events/{id}', [EventController::class, 'show']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-
-    Route::get('/events', [EventController::class, 'index']);
-    Route::get('/events/{id}', [EventController::class, 'show']);
 
     Route::middleware('role:admin,organizer')->group(function () {
         Route::post('/events', [EventController::class, 'store']);
@@ -40,7 +40,11 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::middleware('role:customer')->group(function () {
-        Route::post('/tickets/{id}/bookings', [BookingController::class, 'store']);
+        Route::post(
+            '/tickets/{id}/bookings',
+            [BookingController::class, 'store']
+        )->middleware('prevent.double.booking');
+
         Route::get('/bookings', [BookingController::class, 'index']);
         Route::put('/bookings/{id}/cancel', [BookingController::class, 'cancel']);
     });

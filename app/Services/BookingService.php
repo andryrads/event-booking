@@ -10,13 +10,6 @@ class BookingService
 {
     public function createBooking(Ticket $ticket, BookingData $data, $user): Booking
     {
-        if (Booking::where('ticket_id', $ticket->id)
-            ->where('user_id', $user->id)
-            ->where('status', '!=', 'cancelled')
-            ->exists()) {
-            abort(400, 'You already booked this ticket.');
-        }
-
         if ($data->quantity > $ticket->quantity) {
             abort(400, 'Not enough tickets available.');
         }
