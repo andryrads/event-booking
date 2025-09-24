@@ -22,6 +22,28 @@ class DatabaseSeeder extends Seeder
         User::factory()->count(3)->create(['role' => 'organizer']);
         User::factory()->count(10)->create(['role' => 'customer']);
 
+        // Fixed users for testing login
+        User::create([
+            'name' => 'Admin One',
+            'email' => 'admin@example.com',
+            'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
+        User::create([
+            'name' => 'Organizer One',
+            'email' => 'organizer@example.com',
+            'password' => bcrypt('password'),
+            'role' => 'organizer',
+        ]);
+
+        User::create([
+            'name' => 'Customer One',
+            'email' => 'customer@example.com',
+            'password' => bcrypt('password'),
+            'role' => 'customer',
+        ]);
+
         // Events + Tickets
         Event::factory()
             ->count(5)

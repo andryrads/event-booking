@@ -11,9 +11,10 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = ['name','email','password','phone','role'];
+    protected $hidden = ['password'];
 
     public function events() { return $this->hasMany(Event::class, 'created_by'); }
     public function bookings() { return $this->hasMany(Booking::class); }
